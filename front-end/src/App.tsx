@@ -1,9 +1,12 @@
 import { useState } from "react";
+import Resultado from "./components/Resultado";
+import ResultadoType from "./components/Resultado";
 
 function App() {
   const [placas, setPlacas] = useState("");
   const [valorPlaca, setValorPlaca] = useState("");
   const [valorKwh, setValorKwh] = useState("");
+  const [result, setResult] = useState<ResultadoType | null>(null);
 
   const handleClick = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -29,14 +32,22 @@ function App() {
       }
 
       const data = await response.json();
+      // Supondo que `data` contenha `producao_media` e `producao_total`
+      const resultado: ResultadoType = {
+        producao_media: data.producao_media,
+        producao_total: data.producao_total,
+        economia: data.economia,
+      };
+      setResult(resultado);
       console.log(data); // Exibe a resposta JSON no console
     } catch (error) {
       console.error("Erro ao enviar requisição:", error);
     }
   };
+
   return (
     <>
-      <div className="w-screen h-screen bg-slate-900 flex justify-center items-center">
+      <div className="w-screen h-screen bg-slate-900 flex justify-center items-center flex-col gap-8">
         <form className="w-96 flex flex-col gap-4 ">
           <h1 className="text-slate-100 text-lg">Calculo Energia Solar</h1>
           <input
@@ -60,24 +71,6 @@ function App() {
             className="h-9 rounded p-1"
             onChange={(e) => setValorKwh(e.target.value)}
           />
-          {/* <div className="flex gap-2 items-center">
-            <label className="text-slate-100 text-base">
-              Tem interesse em expandir?
-            </label>
-            <input
-              type="checkbox"
-              name="expandir"
-              placeholder="Quantas placas adicionais?"
-              className="h-9 rounded p-1"
-            />
-          </div>
-
-          <input
-            type="number"
-            name="placas_adicionais"
-            placeholder="Quantas placas adicionais?"
-            className="h-9 rounded p-1"
-          /> */}
           <button
             className="text-slate-100 bg-slate-700 h-9 rounded"
             onClick={(e) => handleClick(e)}
@@ -85,6 +78,13 @@ function App() {
             Enviar
           </button>
         </form>
+        {result ? (
+          <Resultado
+            producao_media={result.producao_media}
+            producao_total={result.producao_total}
+            economia={result.economia}
+          />
+        ) : null}
       </div>
     </>
   );
