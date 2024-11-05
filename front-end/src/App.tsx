@@ -6,6 +6,7 @@ function App() {
   const [placas, setPlacas] = useState("");
   const [valorPlaca, setValorPlaca] = useState("");
   const [valorKwh, setValorKwh] = useState("");
+  const [temperatura, setTemperatura] = useState("");
   const [result, setResult] = useState<ResultadoType | null>(null);
 
   const handleClick = async (
@@ -24,6 +25,7 @@ function App() {
           numero_placas: placas,
           valor_placa: valorPlaca,
           valor_energia: valorKwh,
+          temperatura: temperatura,
         }),
       });
 
@@ -70,6 +72,13 @@ function App() {
             placeholder="Valor kWh, ex: 1.2"
             className="h-9 rounded p-1"
             onChange={(e) => setValorKwh(e.target.value)}
+          />
+          <input
+            type="number"
+            name="temperatura"
+            placeholder="Temperatura, ex: 25.5"
+            className="h-9 rounded p-1"
+            onChange={(e) => setTemperatura(e.target.value)}
           />
           <button
             className="text-slate-100 bg-slate-700 h-9 rounded"
