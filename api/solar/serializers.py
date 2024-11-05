@@ -8,5 +8,6 @@ class SolarSerializer(serializers.ModelSerializer):
         fields = [
             "numero_placas",
             "valor_placa",
-            "valor_energia"
+            "valor_energia",
+            "temperatura"
         ]
