@@ -22,10 +22,18 @@ class CreateView(CreateAPIView):
         model_path = 'solar/regressao/model.pkl'
         model = joblib.load(model_path)
         investimento = instance.valor_placa * instance.numero_placas
-        previsao = model.predict([[0, instance.numero_placas, investimento, instance.valor_placa]])[0]
+        previsao = model.predict([[6,0, instance.numero_placas, instance.temperatura, False, True, False, False ]])[0]
         print(previsao)
 
-        # Retorna os resultados
-        producao_total = previsao * 12 * 25
+
+        # Calculos
+        producao_total = 0
+        temp_factor = abs(25 - instance.temperatura) / 2 * 0.01
+        
+        for i in range(301):
+            degradation = 0.008/12 * i
+            producao_total += previsao - (previsao * temp_factor) - (previsao * degradation)
+        
         valor_economizado = producao_total * instance.valor_energia - investimento
+        # Retorna os resultados
         return Response({'producao_media': previsao, 'producao_total': producao_total, 'economia': valor_economizado }, status=status.HTTP_201_CREATED)
