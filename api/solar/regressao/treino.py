@@ -16,7 +16,7 @@ df = pd.read_csv('producao.csv')
 
 x = df.drop('Production (kWh)', axis=1)
 x = x.drop('Date', axis=1)
-x = x.drop('Total Production (kWh)', axis=1)
+x = x.drop('Plate Price (R$)', axis=1)
 y = df['Production (kWh)']
 
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=18, shuffle=False)
