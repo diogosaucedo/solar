@@ -1,0 +1,33 @@
+networks:
+  app-network:
+    name: app-network
+
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: api
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8001"]
+    ports:
+      - "8001:8001"
+    networks:
+      - app-network
+
+  vite_react:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    container_name: vite_react
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./front-end:/app
+      - /app/node_modules
+    environment:
+      - VITE_HOST=0.0.0.0
+    depends_on:
+      - api
+    networks:
+      - app-network
+
