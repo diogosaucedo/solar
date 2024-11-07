@@ -11,15 +11,23 @@ date = datetime.datetime.today().date()
 year = datetime.datetime.today().year
 regressao = LinearRegression()
 
-df = pd.read_csv('producao.csv')
-#df.head()
 
-x = df.drop('Production (kWh)', axis=1)
-x = x.drop('Date', axis=1)
-x = x.drop('Plate Price (R$)', axis=1)
-y = df['Production (kWh)']
 
-X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=18, shuffle=False)
+client_data = pd.read_csv('producao.csv')
+
+teste_data = client_data['Production (kWh)']
+
+client_data = client_data.drop('Date', axis=1)
+client_data = client_data.drop('Plant ID', axis=1)
+client_data = client_data.drop('Production (kWh)', axis=1)
+client_data = client_data.drop('Primavera', axis=1)
+client_data = client_data.drop('Verão', axis=1)
+client_data = client_data.drop('Outono', axis=1)
+client_data = client_data.drop('Inverno', axis=1)
+client_data = client_data.drop('Plate Price (R$)', axis=1)
+
+
+X_train, X_test, y_train, y_test = train_test_split(client_data, teste_data, test_size=0.3, random_state=18, shuffle=False)
 regressao.fit(X_train,y_train)
 
 # Serializa modelo

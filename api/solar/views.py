@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 import joblib
+import pandas as pd
 
 from solar.models import Solar
 from solar.serializers import SolarSerializer
@@ -21,19 +22,19 @@ class CreateView(CreateAPIView):
         # Carrega o modelo de predição
         model_path = 'solar/regressao/model.pkl'
         model = joblib.load(model_path)
-        investimento = instance.valor_placa * instance.numero_placas
-        previsao = model.predict([[6,0, instance.numero_placas, instance.temperatura, False, True, False, False ]])[0]
-        print(previsao)
-
-
-        # Calculos
-        producao_total = 0
-        temp_factor = abs(25 - instance.temperatura) / 2 * 0.01
+        investimento = (instance.valor_placa * instance.numero_placas) * 1.8
         
-        for i in range(301):
-            degradation = 0.008/12 * i
-            producao_total += previsao - (previsao * temp_factor) - (previsao * degradation)
+        
+        client_data = pd.DataFrame()
+        producao_total = 0
+            
+        for lifetime in range(301):
+            client_data['Lifetime (Months)'] = [lifetime]
+            client_data['Number of Plates'] = instance.numero_placas
+            client_data['Average Temperature (C)'] = instance.temperatura
+            predicted_production = model.predict(client_data)
+            producao_total += predicted_production[0]
         
         valor_economizado = producao_total * instance.valor_energia - investimento
         # Retorna os resultados
-        return Response({'producao_media': previsao, 'producao_total': producao_total, 'economia': valor_economizado }, status=status.HTTP_201_CREATED)
+        return Response({'producao_media': producao_total/300, 'producao_total': producao_total, 'economia': valor_economizado }, status=status.HTTP_201_CREATED)
